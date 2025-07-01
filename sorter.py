@@ -13,6 +13,14 @@ def sort(width: float, height: float, length: float, mass: float) -> str:
     Returns:
         str: The name of the stack the item should be placed in.
     """
+    # Validate input types
+    if not all(isinstance(x, (int, float)) for x in [width, height, length, mass]):
+        raise TypeError("All dimensions and mass must be numeric values.")
+    # Validate input values
+    if any(x < 0 for x in [width, height, length, mass]):
+        raise ValueError("Dimensions and mass must be non-negative.")
+
+    # Constants for sorting criteria
     MAX_DIMENSION = 150.0
     MAX_VOLUME = 1_000_000.0
     MAX_MASS = 20.0
@@ -23,8 +31,7 @@ def sort(width: float, height: float, length: float, mass: float) -> str:
         volume >= MAX_VOLUME or
         width >= MAX_DIMENSION or
         height >= MAX_DIMENSION or
-        length >= MAX_DIMENSION or
-        mass >= MAX_MASS
+        length >= MAX_DIMENSION
     )
 
     is_heavy = mass >= MAX_MASS
@@ -42,23 +49,51 @@ class TestSorter(unittest.TestCase):
     def test_standard_package(self):
         """Test cases for standard packages."""
         self.assertEqual(sort(50, 50, 50, 5), "STANDARD")
-        self.assertEqual(sort(100, 100, 99, 19.9), "STANDARD")
+        self.assertEqual(sort(100, 100, 90, 19.9), "STANDARD")
 
-    def test_bulky_package(self):
-        """Test cases for bulky packages."""
+    def test_special_bulky_by_volume(self):
+        """Test cases for bulky packages by volume."""
+        self.assertEqual(sort(100, 100, 100, 5), "SPECIAL")
+        self.assertEqual(sort(140, 120, 120, 19), "SPECIAL")
+
+    def test_special_bulky_by_dimension(self):
+        """Test cases for bulky packages by dimension."""
         self.assertEqual(sort(200, 50, 50, 5), "SPECIAL")
         self.assertEqual(sort(50, 200, 50, 5), "SPECIAL")
-        self.assertEqual(sort(50, 50, 200, 5), "SPECIAL")
-        self.assertEqual(sort(100, 100, 100, 5_000_000), "REJECTED")
+        self.assertEqual(sort(50, 50, 150, 5), "SPECIAL")
+        self.assertEqual(sort(40, 160, 40, 19), "SPECIAL")
 
-    def test_heavy_package(self):
+    def test_special_heavy_package(self):
         """Test cases for heavy packages."""
-        self.assertEqual(sort(50, 50, 50, 25), "REJECTED")
-        self.assertEqual(sort(150, 150, 150, 20), "REJECTED")
+        self.assertEqual(sort(50, 50, 50, 25), "SPECIAL")
+        self.assertEqual(sort(100, 100, 80, 20), "SPECIAL")
 
     def test_rejected_package(self):
         """Test cases for rejected packages."""
         self.assertEqual(sort(200, 200, 200, 25), "REJECTED")
+        self.assertEqual(sort(160, 160, 160, 30), "REJECTED")
+
+    def test_invalid_input(self):
+        """Test cases for invalid inputs."""
+        with self.assertRaises(TypeError):
+            sort("100", 50, 50, 5)
+        with self.assertRaises(TypeError):
+            sort(100, "50", 50, 5)
+        with self.assertRaises(TypeError):
+            sort(100, 50, "50", 5)
+        with self.assertRaises(TypeError):
+            sort(100, 50, 50, "5")
+    
+    def test_negative_input(self):
+        """Test cases for negative inputs."""
+        with self.assertRaises(ValueError):
+            sort(-100, 50, 50, 5)
+        with self.assertRaises(ValueError):
+            sort(100, -50, 50, 5)
+        with self.assertRaises(ValueError):
+            sort(100, 50, -50, 5)
+        with self.assertRaises(ValueError):
+            sort(100, 50, 50, -5)
 
 
 if __name__ == "__main__":
