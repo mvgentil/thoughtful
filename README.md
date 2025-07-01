@@ -32,3 +32,7 @@ stack = sort(50, 50, 50, 5)
 print(f"The package should be placed in the {stack} stack.")
 # Output: The package should be placed in the STANDARD stack.
 ```
+
+### Tests
+
+The included tests verify that the sorting logic works as expected.
