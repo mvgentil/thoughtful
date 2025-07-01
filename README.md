@@ -13,6 +13,7 @@ The `sort` function categorizes packages as follows:
 ## Usage
 
 Make sure you have Python 3 installed on your system.
+
 To run the included tests, execute the script from your terminal:
 
 ```bash
