@@ -20,7 +20,6 @@ if __name__ == "__main__":
 
     with open("data/packages_cleaned.csv", "w", encoding="utf-8") as f:
         f.writelines(cleaned_lines)
-
     try:
         df = pd.read_csv("data/packages_cleaned.csv")
         df.columns = ["Width", "Height", "Length", "Mass"]
